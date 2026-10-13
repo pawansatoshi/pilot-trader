@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Pilot terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0a0e13;--panel:#10161e;--panel2:#141c26;--line:#1f2a37;--tx:#d5dee8;--mut:#7b8a9b;--up:#19c37d;--dn:#f0506e;--info:#4da3ff;--warn:#e5a82b;--real:#d9485f;--r:6px}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--tx);font:13px/1.45 "IBM Plex Sans",system-ui,sans-serif}
+.mono,time,b.mono,td.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.muted{color:var(--mut)}.small{font-size:11.5px}.up{color:var(--up)}.down{color:var(--dn)}.flat{color:var(--mut)}
+h2{margin:0 0 8px;font:600 11px/1 "IBM Plex Sans";letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.label{display:block;font:500 10px/1.2 "IBM Plex Sans";letter-spacing:.07em;text-transform:uppercase;color:var(--mut)}
+button{font:inherit;color:inherit;cursor:pointer}button:focus-visible{outline:2px solid var(--info);outline-offset:2px}button:disabled{opacity:.45;cursor:not-allowed}
+.link{background:none;border:0;padding:0;color:var(--info);text-decoration:underline;text-underline-offset:2px}
+#terminal{max-width:1680px;margin:0 auto;padding:10px;display:grid;gap:10px;grid-template-columns:360px minmax(0,1fr) 380px;align-items:start}
+.top{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:10px}
+#brand,#banners{grid-column:1/-1}.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;min-width:0}
+.brandbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.logo{letter-spacing:.2em;font-weight:600}.tabs,.modes{display:flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tab,.seg{background:transparent;border:0;padding:6px 14px;color:var(--mut)}.tab.on,.seg.on{background:var(--panel2);color:var(--tx);box-shadow:inset 0 -2px 0 var(--info)}.seg.real.on{box-shadow:inset 0 -2px 0 var(--real);color:#fff}
+.run{margin-left:auto;padding:7px 16px;border-radius:var(--r);border:1px solid var(--info);background:var(--info);color:#04121f;font-weight:600}.run.stop{background:transparent;color:var(--info)}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font:500 10.5px/1.5 "IBM Plex Sans";letter-spacing:.05em;border:1px solid var(--line);background:var(--panel2);white-space:nowrap}
+.pill.demo,.pill.stage-off{color:var(--warn);border-color:#4a3a14}.pill.real{color:#fff;background:var(--real);border-color:var(--real)}.pill.stage-on{color:var(--info);border-color:#1d3f66}
+.pill.st-cand{color:var(--warn);border-color:#4a3a14}.pill.st-near{color:#9fc4ee}.pill.st-watch{color:var(--mut)}.pill.st-ai{color:#b79cff;border-color:#3a2d66}.pill.st-risk{color:var(--info)}.pill.st-exec{color:var(--info);border-color:#1d3f66}.pill.st-pos{color:var(--up);border-color:#145a3d}.pill.st-rej{color:var(--dn);border-color:#5a1f2b}.pill.st-cool{color:var(--mut)}
+.pill.status-scanning,.pill.status-trading{color:var(--up);border-color:#145a3d}.pill.status-paused,.pill.status-locked{color:var(--warn);border-color:#4a3a14}.pill.status-stopped{color:var(--mut)}.pill.ai-approve{color:var(--up)}.pill.ai-reject,.pill.ai-invalid,.pill.ai-unavailable{color:var(--dn)}
+.banner{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:9px 12px;margin-bottom:8px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel)}
+.banner b{letter-spacing:.04em}.banner ul{margin:4px 0 0 16px;padding:0;flex-basis:100%}.banner em{color:var(--mut);font-style:normal}
+.banner.goal{border-color:#145a3d;background:#0d1f18}.banner.loss{border-color:#5f4a12;background:#1f1a0c}.banner.blocked{border-color:#6a2230;background:#1f0f14}.banner.real{border-color:var(--real);background:#220f14}.banner.degraded{border-color:#4a3a14}
+.stage{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}.stage .detail{color:var(--mut);font-size:12px}
+.steps{display:flex;gap:4px;flex-wrap:wrap;list-style:none;margin:0;padding:0}.step{display:flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid var(--line);border-radius:4px;font-size:11px;color:var(--mut);background:var(--panel2)}
+.step i{width:7px;height:7px;border-radius:50%;background:#2a3645}.step.done{color:var(--tx)}.step.done i{background:var(--up)}.step.active{color:#fff;border-color:var(--info)}.step.active i{background:var(--info);animation:pulse 1.8s infinite}.step.skipped{text-decoration:line-through}.step.off{opacity:.45}
+@keyframes pulse{50%{opacity:.35}}@media (prefers-reduced-motion:reduce){.step.active i,.feed.live i{animation:none}}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.kpi b{font-size:18px;font-weight:500}.kpi small{font-size:11px;color:var(--mut)}
+.meters{display:grid;gap:8px}.meter{display:grid;grid-template-columns:130px 1fr auto;gap:8px;align-items:center;font-size:11.5px}.bar{height:6px;background:#1a2430;border-radius:3px;overflow:hidden}.bar i{display:block;height:100%;background:var(--info)}
+.meter.goal .bar i{background:var(--up)}.meter.loss .bar i{background:var(--warn)}.meter.hit .bar i{background:var(--dn)}.meter.goal.hit .bar i{background:var(--up)}
+.scanstats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:8px;font-size:12px}.subhead{margin:10px 0 4px;font-weight:600;font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}.rejlist{margin:0;padding:0;list-style:none;font-size:12px}.rejlist li{padding:3px 0;border-bottom:1px solid var(--line)}
+table.grid{width:100%;border-collapse:collapse;font-size:12px}table.grid th{font:500 10px "IBM Plex Sans";letter-spacing:.06em;text-transform:uppercase;color:var(--mut);text-align:left;padding:4px 6px;border-bottom:1px solid var(--line)}table.grid td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}table.grid tr.hot{background:#121b26}.why{color:var(--mut);font-size:11.5px}
+.empty{color:var(--mut);padding:6px 0}.note{margin-top:8px;padding:7px 9px;border-left:2px solid var(--line);color:var(--mut);font-size:11.5px}
+.charthead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}.chips{display:flex;gap:4px;flex-wrap:wrap}.chip,.tfbtn{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:3px 9px;color:var(--mut)}.chip.on,.tfbtn.on{color:#fff;border-color:var(--info)}.tfs{display:flex;gap:4px;margin-left:auto}
+.feed{display:inline-flex;align-items:center;gap:6px;font:500 10.5px "IBM Plex Sans";letter-spacing:.06em;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--mut)}.feed i{width:7px;height:7px;border-radius:50%;background:var(--mut)}.feed.live{color:var(--up)}.feed.live i{background:var(--up);animation:pulse 1.8s infinite}.feed.stale,.feed.connecting{color:var(--warn)}.feed.disconnected,.feed.unavailable{color:var(--dn)}
+.livebar{display:flex;gap:16px;align-items:baseline;margin-bottom:4px}.livebar .px{font:500 20px "IBM Plex Mono"}#chart{height:clamp(280px,46vh,560px);width:100%}
+.lv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.lv b{font-size:15px;font-weight:500}.tagline{margin-bottom:6px}.levels.indicative .lv{opacity:.9}
+.pos{padding:8px 0;border-bottom:1px solid var(--line)}.pos:last-child{border:0}.poshead{margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.posgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.headline{font:600 12px "IBM Plex Sans";letter-spacing:.06em;margin-bottom:6px}.setup.issetup .headline{color:var(--warn)}.setup.istrade .headline{color:var(--up)}.srow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.aihead{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}dl{display:grid;grid-template-columns:96px 1fr;gap:4px 10px;margin:0}dt{color:var(--mut);font-size:11.5px}dd{margin:0;word-break:break-word}
+.timeline{list-style:none;margin:0;padding:0;max-height:420px;overflow:auto}.ev{display:grid;grid-template-columns:62px auto 1fr;gap:2px 8px;padding:4px 0;border-bottom:1px solid var(--line);font-size:12px;align-items:baseline}.ev time{color:var(--mut)}.evlabel{font:600 10px "IBM Plex Sans";letter-spacing:.05em;color:var(--info)}
+.ev.warn .evlabel{color:var(--warn)}.ev.err .evlabel{color:var(--dn)}.ev.ok .evlabel{color:var(--up)}.ev.trade .evlabel{color:#fff}.ev .evtext{grid-column:3;color:var(--mut)}.ev .pill{grid-column:2;justify-self:start}
+.syslabel{padding:6px 8px;border-radius:4px;margin-bottom:8px;font:600 11px "IBM Plex Sans";letter-spacing:.06em;border:1px solid var(--line)}.syslabel.safe{color:var(--up)}.syslabel.degraded{color:var(--warn)}.syslabel.blocked{color:var(--dn);border-color:#6a2230}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.tile{display:flex;flex-direction:column;gap:2px;padding:7px 8px;border:1px solid var(--line);border-radius:4px;background:var(--panel2)}.tile b{font-weight:500}.tile.ok b{color:var(--up)}.tile.fail b{color:var(--dn)}.tile.warn b{color:var(--warn)}.tile.skip b,.tile.unknown b{color:var(--mut)}.fix{color:var(--warn)}
+.login{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:10}.login[hidden]{display:none}.login form{width:min(340px,90vw);padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:grid;gap:10px}.login h1{margin:0;letter-spacing:.2em;font-size:18px}.login p{margin:0;color:var(--mut)}.login input{padding:11px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel2);color:var(--tx);font-size:16px}.login button{padding:11px;border-radius:var(--r);border:0;background:var(--info);color:#04121f;font-weight:600}.err{color:var(--dn);min-height:18px}
+@media (max-width:1199px) and (min-width:900px){#terminal{grid-template-columns:minmax(0,1fr) 360px}.col-left{grid-column:1/-1;order:3}.top{grid-template-columns:minmax(0,1fr) 340px}}
+@media (max-width:899px){
+  #terminal{display:flex;flex-direction:column;padding:8px;gap:8px}.top,.col{display:contents}
+  [data-panel="brand"]{order:0}[data-panel="banners"]{order:1}[data-panel="status"]{order:2}[data-panel="pnl"]{order:3}[data-panel="position"]{order:4}[data-panel="chart"]{order:5}[data-panel="levels"]{order:6}[data-panel="setup"]{order:7}[data-panel="ai"]{order:8}[data-panel="timeline"]{order:9}[data-panel="health"]{order:10}[data-panel="scanner"]{order:11}
+  .steps{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}.step{flex:none}.run{margin-left:0;flex:1}.brandbar{gap:6px}.meter{grid-template-columns:104px 1fr auto}.lv{grid-template-columns:repeat(2,1fr)}.posgrid{grid-template-columns:repeat(2,1fr)}.tiles{grid-template-columns:1fr 1fr}#chart{height:300px}.tfs{margin-left:0}
+  table.grid th:nth-child(5),table.grid td.why{display:none}.timeline{max-height:320px}
+}
+</style>
+
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <form id="login-form"><h1>PILOT</h1><p>Sign in to the trading terminal</p>
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button type="submit">Sign in</button><div id="login-err" class="err"></div></form>
+</div>
+<main id="terminal">
+  <div class="top">
+    <section id="brand" data-panel="brand"><div class="brandbar"><strong class="logo">PILOT</strong><nav class="tabs"><button class="tab on" data-action="market:futures">Futures</button><button class="tab" data-action="market:spot">Spot</button></nav><div class="modes"><button class="seg on" data-action="mode:demo">Demo</button><button class="seg real" data-action="mode:real">Real</button></div><button class="run stop" data-action="toggle:futures">Stop Futures</button><span class="pill demo">DEMO: simulated fills, no real orders</span></div></section>
+    <div id="banners" data-panel="banners"><div class="banner degraded"><b>STATIC PREVIEW: -3% loss limit: new trades paused</b><span>Rendered by public/js/render.js from backend output produced against a FAKE exchange in the test sandbox. The chart needs the browser connection to Binance and is not rendered here. This file is documentation, not part of the product.</span></div><div class="banner loss"><b>DAILY LOSS LIMIT — NEW TRADES PAUSED</b><span>Open positions keep following normal risk management. Trading resumes automatically next day with the updated balance.</span></div></div>
+    <section class="panel" data-panel="status"><h2>Bot status and workflow</h2><div id="status-body"><span class="pill status-paused">PAUSED</span><div class="stage"><span class="label">STAGE</span> <span class="pill stage-on">SCANNING</span><span class="detail">Loss limit reached, paused. Resumes automatically in 23h 25m with the new balance.</span></div><ol class="steps"><li class="step done" data-step="START" title="START: done"><i></i>START</li><li class="step done" data-step="HEALTH" title="HEALTH CHECK: done"><i></i>HEALTH CHECK</li><li class="step active" data-step="SCANNING" title="SCANNING: active"><i></i>SCANNING</li><li class="step pending" data-step="SETUP" title="SETUP DETECTED: pending"><i></i>SETUP DETECTED</li><li class="step pending" data-step="AI" title="AI REVIEW: pending"><i></i>AI REVIEW</li><li class="step pending" data-step="RISK" title="RISK CHECK: pending"><i></i>RISK CHECK</li><li class="step pending" data-step="EXECUTION" title="EXECUTION: pending"><i></i>EXECUTION</li><li class="step pending" data-step="FILL" title="EXCHANGE FILL: pending"><i></i>EXCHANGE FILL</li><li class="step pending" data-step="PROTECTION" title="PROTECTION: pending"><i></i>PROTECTION</li><li class="step pending" data-step="POSITION" title="POSITION: pending"><i></i>POSITION</li><li class="step pending" data-step="CLOSED" title="CLOSED: pending"><i></i>CLOSED</li><li class="step pending" data-step="OUTCOME" title="OUTCOME: pending"><i></i>OUTCOME</li></ol></div></section>
+    <section class="panel" data-panel="pnl"><h2>Account and daily limits</h2><div id="pnl-body"><div class="kpis"><div class="kpi"><span class="label">BALANCE</span><b class="mono">960.00 <small>USDT</small></b></div><div class="kpi"><span class="label">TODAY</span><b class="mono down">-40.00 <small>USDT</small></b><span class="mono down">-4.00%</span></div><div class="kpi"><span class="label">POSITIONS</span><b class="mono">0</b></div></div><div class="meters"><div class="meter goal"><span class="label">TARGET +8%</span><div class="bar"><i style="width:0%"></i></div><span class="mono">0% </span></div><div class="meter loss hit"><span class="label">PROTECTION -3%</span><div class="bar"><i style="width:100%"></i></div><span class="mono">LIMIT HIT: new trades paused</span></div></div></div></section>
+  </div>
+  <div class="col col-left">
+    <section class="panel" data-panel="scanner"><h2>Market scanner</h2><div id="scanner-body"><div class="empty">Scan running: no scan has completed yet.</div></div></section>
+    <section class="panel" data-panel="health"><h2>Infrastructure health</h2><div id="health-body"><div class="syslabel safe">SYSTEM: SAFE</div><div class="tiles"><div class="tile ok"><span class="label">BINANCE FUTURES</span><b>OK</b><span class="muted small">OK</span></div><div class="tile ok"><span class="label">WORKER</span><b>ALIVE</b><span class="muted small">last signal 0s ago</span></div><div class="tile ok"><span class="label">DATABASE</span><b>CONNECTED</b><span class="muted small"></span></div><div class="tile ok"><span class="label">OPENROUTER</span><b>OK</b><span class="muted small">45/45 calls left today · model none</span></div><div class="tile ok"><span class="label">TELEGRAM</span><b>OK</b><span class="muted small">OK</span></div><div class="tile ok"><span class="label">CONDITIONAL ORDERS</span><b>OK</b><span class="muted small">OK</span></div></div></div></section>
+  </div>
+  <div class="col col-center">
+    <section class="panel chartpanel" data-panel="chart">
+      <div class="charthead"><div id="symchips" class="chips"></div><div id="tfs" class="tfs"></div><span id="feedstatus" class="feed off">NO FEED (preview)</span></div>
+      <div id="livebar" class="livebar"></div>
+      <div id="chart" role="img" aria-label="Candlestick chart"><div class="empty" style="padding:90px 0;text-align:center">Live candlestick chart renders in the browser from the Binance WebSocket (5m / 15m / 1h / 4h). Not available in this static preview.</div></div>
+      <div id="chartnote" class="note"></div>
+    </section>
+    <section class="panel" data-panel="levels"><h2>Entry / stop loss / take profit</h2><div id="levels-body"><div class="empty">No position and no setup with levels.</div></div></section>
+    <section class="panel" data-panel="position"><h2>Open position</h2><div id="position-body"><div class="empty">No open position.</div></div></section>
+  </div>
+  <div class="col col-right">
+    <section class="panel" data-panel="setup"><h2>Current setup</h2><div id="setup-body"><div class="empty">No setup under review. The bot is scanning.</div></div></section>
+    <section class="panel" data-panel="ai"><h2>AI review</h2><div id="ai-body"><div class="empty">No AI review for the current setup yet.</div></div></section>
+    <section class="panel" data-panel="timeline"><h2>Activity timeline</h2><div id="timeline-body"><ol class="timeline"><li class="ev system warn" data-kind="msg"><time class="mono">19:04:29</time><span class="evlabel">ALERT</span><span class="evtext">Daily loss limit -3% reached: trading paused for today.</span></li><li class="ev system ok" data-kind="account_synced"><time class="mono">19:04:29</time><span class="evlabel">ACCOUNT SYNCED</span><span class="evtext">Account synchronized (demo): balance 960.00 USDT</span></li><li class="ev system ok" data-kind="exchange_connected"><time class="mono">19:04:29</time><span class="evlabel">EXCHANGE CONNECTED</span><span class="evtext">Binance futures market data reachable</span></li><li class="ev system ok" data-kind="health_checked"><time class="mono">19:04:29</time><span class="evlabel">HEALTH CHECK</span><span class="evtext">Health check: 7 ok, 0 failed</span></li><li class="ev system ok" data-kind="bot_started"><time class="mono">19:04:29</time><span class="evlabel">BOT STARTED</span><span class="evtext">Futures bot started (demo mode)</span></li></ol></div></section>
+  </div>
+</main>
+
+</body>
+</html>

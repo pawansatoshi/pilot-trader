@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Pilot terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightweight-charts/4.1.3/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <form id="login-form"><h1>PILOT</h1><p>Sign in to the trading terminal</p>
+    <input id="pw" type="password" placeholder="Password" autocomplete="current-password"><button type="submit">Sign in</button><div id="login-err" class="err"></div></form>
+</div>
+<main id="terminal">
+  <div class="top">
+    <section id="brand" data-panel="brand"></section>
+    <div id="banners" data-panel="banners"></div>
+    <section class="panel" data-panel="status"><h2>Bot status and workflow</h2><div id="status-body"></div></section>
+    <section class="panel" data-panel="pnl"><h2>Account and daily limits</h2><div id="pnl-body"></div></section>
+  </div>
+  <div class="col col-left">
+    <section class="panel" data-panel="scanner"><h2>Market scanner</h2><div id="scanner-body"></div></section>
+    <section class="panel" data-panel="health"><h2>Infrastructure health</h2><div id="health-body"></div></section>
+  </div>
+  <div class="col col-center">
+    <section class="panel chartpanel" data-panel="chart">
+      <div class="charthead"><div id="symchips" class="chips"></div><div id="tfs" class="tfs"></div><span id="feedstatus" class="feed off">NO FEED</span></div>
+      <div id="livebar" class="livebar"></div>
+      <div id="chart" role="img" aria-label="Candlestick chart"></div>
+      <div id="chartnote" class="note"></div>
+    </section>
+    <section class="panel" data-panel="levels"><h2>Entry / stop loss / take profit</h2><div id="levels-body"></div></section>
+    <section class="panel" data-panel="position"><h2>Open position</h2><div id="position-body"></div></section>
+  </div>
+  <div class="col col-right">
+    <section class="panel" data-panel="setup"><h2>Current setup</h2><div id="setup-body"></div></section>
+    <section class="panel" data-panel="ai"><h2>AI review</h2><div id="ai-body"></div></section>
+    <section class="panel" data-panel="timeline"><h2>Activity timeline</h2><div id="timeline-body"></div></section>
+  </div>
+</main>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

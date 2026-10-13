@@ -1,0 +1,141 @@
+{
+ "environment": {
+  "status": "TEMPLATE: nothing has been run yet. Every item is NOT RUN. Real results are written to testnet_report.json by the tools."
+ },
+ "evidence": {
+  "ccxt_version": "not observed yet",
+  "binance_environment": "not observed yet",
+  "futures_STOP_MARKET_qty_response": "not observed yet",
+  "futures_STOP_MARKET_close_response": "not observed yet",
+  "futures_TAKE_PROFIT_MARKET_qty_response": "not observed yet",
+  "futures_TAKE_PROFIT_MARKET_close_response": "not observed yet",
+  "algo_mode_STOP_MARKET_qty_works": "not observed yet",
+  "algo_mode_STOP_MARKET_close_works": "not observed yet",
+  "SL_trigger_vs_fill": "not observed yet",
+  "TP_trigger_vs_fill": "not observed yet",
+  "spot_triggered_unfilled_order": "not observed yet",
+  "spot_escalation_market_sell": "not observed yet"
+ },
+ "items": {
+  "1": {
+   "name": "Futures market entry",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "2": {
+   "name": "Futures LONG",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "3": {
+   "name": "Futures SHORT",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "4": {
+   "name": "Futures STOP_MARKET via Algo Order API",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "5": {
+   "name": "Futures TAKE_PROFIT_MARKET via Algo Order API",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "6": {
+   "name": "Algo order listing",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "7": {
+   "name": "Algo order cancellation",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "8": {
+   "name": "Actual SL trigger (--trigger)",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "9": {
+   "name": "Actual TP behavior (--tp)",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "10": {
+   "name": "clientOrderId lookup",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "11": {
+   "name": "Cancel / recovery",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "12": {
+   "name": "Timeout-after-fill creates no duplicate",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "13": {
+   "name": "Worker restart with an open position",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "14": {
+   "name": "DB / exchange reconciliation",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "15": {
+   "name": "Duplicate prevention",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "16": {
+   "name": "Spot market BUY",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "17": {
+   "name": "Spot STOP_LOSS_LIMIT",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "18": {
+   "name": "Spot watchdog escalation (as far as Demo allows)",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "19": {
+   "name": "Telegram alerts",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "20": {
+   "name": "OpenRouter behavior",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "21": {
+   "name": "Vercel dashboard state",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "22": {
+   "name": "+8% daily lock",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "23": {
+   "name": "-3% daily protection",
+   "status": "NOT RUN",
+   "steps": []
+  },
+  "24": {
+   "name": "Next-day compounding",
+   "status": "NOT RUN",
+   "steps": []
+  }
+ }
+}

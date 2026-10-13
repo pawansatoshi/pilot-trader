@@ -1,0 +1,14 @@
+// Handcrafted view-models with the same shape the backend produces (views.dashboard). Contract tests check the real shape separately.
+export const tile = (status = 'ok', extra = {}) => ({ status, label: { ok: 'OK', fail: 'FAILED', warn: 'WARNING', skip: 'NOT CONFIGURED', unknown: 'UNKNOWN' }[status], msg: '', fix: null, ms: null, ...extra });
+export const market = (o = {}) => ({
+  running: true, status: { code: 'scanning', label: 'SCANNING', detail: 'Market is quiet' }, balance: 1000, day_start: 1000, day_pnl_abs: 0, day_pnl_pct: 0,
+  target: { pct: 8, progress: 0, reached: false }, protection: { pct: 3, used: 0, hit: false }, lock: null, blocked: null, degraded: [], system_state: 'safe',
+  workflow: { stage: 'SCANNING', label: 'SCANNING', recent_outcome: false, steps: ['START', 'HEALTH CHECK', 'SCANNING', 'SETUP DETECTED', 'AI REVIEW', 'RISK CHECK', 'EXECUTION', 'EXCHANGE FILL', 'PROTECTION', 'POSITION', 'CLOSED', 'OUTCOME'].map((l, i) => ({ code: l.replace(' ', '_'), label: l, state: i < 2 ? 'done' : i === 2 ? 'active' : 'pending' })) },
+  scan: { stats: {}, phase: 'idle', next_scan_ts: null, counts: {}, note: null }, rows: [], rejections: [], active_setup: null, positions: [], last_outcome: null, timeline: [], ...o });
+export const dash = (m = {}, o = {}) => ({ now: 1700000000, mode: 'demo', real_allowed: false, mode_banner: { label: 'DEMO: simulated fills, no real orders', real: false, real_locked: true },
+  infra: { binance: { futures: tile('ok', { ms: 120 }), spot: tile('ok'), keys: { futures: tile('skip'), spot: tile('skip') }, algo: tile('skip') }, worker: { label: 'ALIVE', ok: true, heartbeat_age: 10 }, database: { label: 'CONNECTED', ok: true },
+    openrouter: { ...tile('ok'), calls_used: 5, calls_remaining: 40, cap: 45, model: 'm/free', state: 'available', last_error: null }, telegram: tile('ok'), checked_at: 1700000000 },
+  markets: { futures: market(m), spot: market() }, ...o });
+export const pos = (o = {}) => ({ id: 1, symbol: 'SOLUSDT', side: 'LONG', qty: 2, entry: 100, sl: 98, tp: 104, risk: 2, opened: 1700000000, simulated: true, exchange_verified: null, stop_moves: [], ...o });
+export const setup = (o = {}) => ({ id: 1, symbol: 'SOLUSDT', direction: 'LONG', state: 'CANDIDATE', state_label: 'SETUP DETECTED', since: 1700000000, reason: 'EMAs aligned up; score +1.95', score: 1.95, is_trade: false, headline: 'SETUP, NOT A TRADE YET', levels: { entry: 100, sl: 98.7, tp: 102.6, eff_rr: 1.7, kind: 'indicative' }, ai: null, ...o });
+export const ai = (o = {}) => ({ verdict: 'APPROVE', confidence_pct: 78, grade: null, reason: 'trend and volume agree', case_for: null, case_against: null, fatal_flaw: null, invalidation: null, model: 'm/free', prompt_version: 'v1', latency_ms: 2300, status: 'in review', gate_ok: null, gate_reasons: null, authority: 'AI is a reviewer. It cannot change size, leverage, entry, stop or target, and it cannot bypass the risk gate.', ...o });
