@@ -10,6 +10,10 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 def read(*p):
     with open(os.path.join(ROOT, *p)) as f: return f.read()
 HAVE_NODE = shutil.which("node") is not None
+def node_counts(out):
+    """(pass, fail) from node's test summary. Newer Node versions print the 'spec' format ("ℹ pass 36") instead of TAP ("# pass 36") when piped."""
+    g = lambda k: (lambda m: int(m.group(1)) if m else None)(re.search(r"(?:#|ℹ)\s+" + k + r"\s+(\d+)", out))
+    return g("pass"), g("fail")
 FIX = tempfile.mkdtemp(prefix="dash_fixtures_")
 
 class D3B(S3):
@@ -127,6 +131,14 @@ class TestAiAndTradeViews(D3B):
         t = self.open_trade(); C.log("moved", mk="futures", kind="stop_moved", symbol=SYM, trade_id=t["id"], data=dict(new_sl=t["entry"])); self.close_tp(t); v = views.trades("futures", "demo", SYM); r = v[0]
         self.assertEqual((r["status"], r["reason"], r["simulated"], len(r["stop_moves"]), r["stop_moves"][0]["new_sl"]), ("CLOSED", "TP", True, 1, t["entry"])); self.assertGreater(r["r_mult"], 1.5); self.assertEqual(views.trades("futures", "demo", "OTHERUSDT"), []); self.assertEqual(views.trades("spot", "demo"), [])
 
+class TestNodeSummaryParsing(unittest.TestCase):
+    def test_both_reporter_formats_are_understood(self):
+        self.assertEqual(node_counts("# tests 36\n# suites 0\n# pass 36\n# fail 0\n"), (36, 0)); self.assertEqual(node_counts("ℹ tests 36\nℹ suites 0\nℹ pass 36\nℹ fail 0\nℹ cancelled 0\n"), (36, 0)); self.assertEqual(node_counts("ℹ pass 35\nℹ fail 1\n"), (35, 1)); self.assertEqual(node_counts("garbage"), (None, None))
+    @unittest.skipUnless(HAVE_NODE, "node not installed")
+    def test_parser_matches_what_this_node_prints_in_both_reporters(self):
+        for rep in ("tap", "spec"):
+            r = subprocess.run(["node", "--test", f"--test-reporter={rep}", "tests/js/format_chartmodel.test.mjs"], cwd=ROOT, capture_output=True, text=True); p, f = node_counts(r.stdout); self.assertEqual((r.returncode, f), (0, 0), rep); self.assertGreaterEqual(p, 7, rep)
+
 class TestFrontendStatic(unittest.TestCase):
     def test_html_has_every_panel_exactly_once(self):
         h = read("public", "index.html"); panels = re.findall(r'data-panel="(\w+)"', h); self.assertEqual(sorted(panels), sorted(["brand", "banners", "status", "pnl", "scanner", "health", "chart", "levels", "position", "setup", "ai", "timeline"])); self.assertIn('type="module" src="js/app.js"', h); self.assertIn('name="viewport"', h)
@@ -158,8 +170,8 @@ class TestFrontendStatic(unittest.TestCase):
 @unittest.skipUnless(HAVE_NODE, "node not installed")
 class TestNodeSuites(unittest.TestCase):
     def test_javascript_unit_tests(self):
-        r = subprocess.run(["node", "--test", "tests/js/*.test.mjs"], cwd=ROOT, capture_output=True, text=True); n = re.search(r"# pass (\d+)", r.stdout); f = re.search(r"# fail (\d+)", r.stdout)
-        self.assertEqual((r.returncode, f and f.group(1)), (0, "0"), r.stdout[-1500:]); self.assertGreaterEqual(int(n.group(1)), 36)
+        r = subprocess.run(["node", "--test", "tests/js/*.test.mjs"], cwd=ROOT, capture_output=True, text=True); n, f = node_counts(r.stdout)
+        self.assertEqual((r.returncode, f), (0, 0), r.stdout[-1500:]); self.assertGreaterEqual(n, 36)
     def test_zz_backend_to_frontend_contract(self):
         files = sorted(os.listdir(FIX)); self.assertGreaterEqual(len(files), 8, files)    # fixtures are dumped by the TestDashboardStates tests (real backend output)
         r = subprocess.run(["node", "tests/js/contract_check.mjs", FIX], cwd=ROOT, capture_output=True, text=True); self.assertEqual(r.returncode, 0, r.stderr); out = json.loads(r.stdout)
